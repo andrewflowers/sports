@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "# Do teams who get open shots in the regular season do worse in the playoffs?\n\nsetwd(\"~/sports/nba-playoffs-2016/\")\n\nrequire(readr)\nrequire(dplyr)\nrequire(ggplot2)\n\n# Read in data\nreg_season_16 <- read_tsv(\"reg_season_2016.tsv\")\nreg_season_16$year <- 2016\nreg_season_15 <- read_tsv(\"reg_season_2015.tsv\")\nreg_season_15$year <- 2015\nreg_season_14 <- read_tsv(\"reg_season_2014.tsv\")\nreg_season_14$year <- 2014\n\nreg_season <- rbind(reg_season_14, reg_season_15, reg_season_16)\nrm(reg_season_14, reg_season_15, reg_season_16)\n\nopp_reg_season_16 <- read_tsv(\"opp_reg_season_2016.tsv\")\nopp_reg_season_16$year <- 2016\nopp_reg_season_15 <- read_tsv(\"opp_reg_season_2015.tsv\")\nopp_reg_season_15$year <- 2015\nopp_reg_season_14 <- read_tsv(\"opp_reg_season_2014.tsv\")\nopp_reg_season_14$year <- 2014\n\nopp_reg_season <- rbind(opp_reg_season_14, opp_reg_season_15, opp_reg_season_16)\nrm(opp_reg_season_14, opp_reg_season_15, opp_reg_season_16)\n\nplayoffs_16 <- read_tsv(\"playoffs_2016.tsv\")\nplayoffs_16$year <- 2016\nplayoffs_15 <- read_tsv(\"playoffs_2015.tsv\")\nplayoffs_15$year <- 2015\nplayoffs_14 <- read_tsv(\"playoffs_2014.tsv\")\nplayoffs_14$year <- 2014\n\nplayoffs <- rbind(playoffs_14, playoffs_15, playoffs_16)\nrm(playoffs_14, playoffs_15, playoffs_16)\n\n## Merge data and drop unnecessary variables\nall_data <- playoffs %>% \n  left_join(reg_season, by=c('Team', 'year')) %>% \n  left_join(opp_reg_season, by=c('Team', 'year')) %>% \n  select(1, 8, 3:5, 10:12, 16:18) %>% \n  rename(team = Team, EFG_playoffs=EFG.x, qSQ_playoffs=`Situational EFG (qSQ).x`, qSI_playoffs=`EFG+ (qSI).x`,\n         EFG_reg=EFG.y, qSQ_reg=`Situational EFG (qSQ).y`, qSI_reg=`EFG+ (qSI).y`,\n         EFG_def_reg=EFG, qSQ_def_reg=`Situational EFG (qSQ)`, qSI_def_reg=`EFG+ (qSI)`\n         )\n\n# Calculate playoff opponent's qSE_def_reg\nplayoff_series <- read_csv(\"playoff_series_data.csv\")\n\nplayoff_series$team[which(playoff_series$team==\"BRK\")] <- 'BKN'\nplayoff_series$team[which(playoff_series$team==\"CHO\")] <- 'CHA'\nplayoff_series$opp[which(playoff_series$opp==\"BRK\")] <- 'BKN'\nplayoff_series$opp[which(playoff_series$opp==\"CHO\")] <- 'CHA'\n\nplayoff_opp_def <- playoff_series %>% \n  left_join(all_data, by=c('opp' = 'team', 'year')) %>% \n  select(1:4, qSQ_def_reg) %>% \n  group_by(team, year) %>% \n  summarize(opp_qSQ_def=mean(qSQ_def_reg, w=games, na.rm=T))\n\nall_data <- all_data %>% left_join(playoff_opp_def, by=c('team', 'year'))\n\nsummary(lm(data=all_data, formula=qSQ_playoffs~qSQ_reg+opp_qSQ_def))\n\nall_data %>% \n  ggplot(aes(opp_qSQ_def, qSQ_playoffs)) +\n  geom_point() + geom_smooth(method=\"lm\") +\n  xlab(\"Opponent's Allowed Shot Quality On Defense (Regular Season)\") +\n  ylab(\"Shot Quality (Playoffs)\") +\n  ggtitle(\"Playoff Shot Quality v. Opponents Allowed Shot Quality\\n 2014-2016 seasons\")\n\n",
+    "created" : 1461811905889.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1232148532",
+    "id" : "9AE197F5",
+    "lastKnownWriteTime" : 1461811964,
+    "last_content_update" : 1461811964175,
+    "path" : "~/sports/nba-playoffs-2016/open_shots.R",
+    "project_path" : "open_shots.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

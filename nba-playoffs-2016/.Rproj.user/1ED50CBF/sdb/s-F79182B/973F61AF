@@ -1,0 +1,28 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1461811249766.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "973F61AF",
+    "lastKnownWriteTime" : 4914875456433422342,
+    "last_content_update" : 1461811249766,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "gq4fqfxssc",
+        "caption" : "playoff_series",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=playoff_series&cache_key=gq4fqfxssc",
+        "displayedObservations" : 76,
+        "environment" : "",
+        "object" : "playoff_series",
+        "totalObservations" : 76,
+        "variables" : 4
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
